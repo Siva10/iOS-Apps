@@ -19,7 +19,9 @@
     IBOutlet UILabel *labelAmount;
 }
 -(IBAction) sliderNumberOfYearsChanged:(id)sender;
+
 -(IBAction) sliderInterestRateChanged:(id)sender;
+
 -(IBAction) displayAmount;
 
 @end
