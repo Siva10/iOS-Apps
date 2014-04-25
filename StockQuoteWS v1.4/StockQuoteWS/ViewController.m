@@ -53,7 +53,23 @@ NSURLConnection *conn;
 
 -(void) connectionDidFinishLoading:(NSURLConnection *) connection {
 	NSLog(@"Done with bytes %d", [buffer length]);
-	[activityIndicatorView stopAnimating];
+	
+    NSMutableString *theXML=[[NSMutableString alloc] initWithBytes:[buffer mutableBytes] length:[buffer length] encoding:NSUTF8StringEncoding];
+    [theXML replaceOccurrencesOfString:@"&lt" withString:@"<"options:0 range:NSMakeRange(0, [theXML length])];
+    [theXML replaceOccurrencesOfString:@"&gt;" withString:@">" options:0 range:NSMakeRange(0, [theXML length])];
+    NSLog(@"Soap Response is %@",theXML);
+    
+    [buffer setData:[theXML dataUsingEncoding:NSUTF8StringEncoding]];;
+    
+    self.parser=[[NSXMLParser alloc] initWithData:buffer];
+    [parser setDelegate:self];
+    [parser parse];
+    
+    
+    
+    
+    
+    [activityIndicatorView stopAnimating];
     
 }
 
