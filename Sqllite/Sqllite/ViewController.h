@@ -37,6 +37,6 @@
 -(IBAction)createContact;
 -(IBAction)findContact;
 -(IBAction)updateContact;
--(IBAction)createContact;
+-(IBAction)deleteContact;
 
 @end

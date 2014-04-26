@@ -26,17 +26,22 @@
     
     databasePath=[[NSString alloc]initWithString:[docsDir stringByAppendingPathComponent:@"contacs.sqlite"]];
 
+    const char *dbpath=[databasePath UTF8String];
+    
+    if(sqlite3_open(dbpath, &contactDB)==SQLITE_OK)
+    {
+        char *errMsg;
+        const char *sql_stmt="Create table if not exists contacts(ID Integer Primary Key Autoincrement,Name text, Address Text,Phone text)";
+        if (sqlite3_exec(contactDB, sql_stmt, NULL, NULL, &errMsg)!=SQLITE_OK) {
+            status.text=@"Failed to create table";
+            
+        }
+    }
+    else{
+        status.text=@"Failed to open/create database";
+    }
 
-
-
-
-
-
-
-
-
-
-
+    [self prepareStatement];
 
 }
 
@@ -63,7 +68,7 @@
     
     //Update
     
-    sqlString=[NSString stringWithFormat:@"Update contacts set address=? phone=? where name=?"];
+    sqlString=[NSString stringWithFormat:@"Update contacts set address=?, phone=? where name=?"];
     sql_stmt=[sqlString UTF8String];
     
     sqlite3_prepare_v2(contactDB, sql_stmt, -1, &updateStatement, NULL);
@@ -75,7 +80,7 @@
     sqlite3_prepare_v2(contactDB, sql_stmt, -1, &deleteStatement, NULL);
 
     //Select
-    sqlString=[NSString stringWithFormat:@"Select address,phone from contacs where name=?"];
+    sqlString=[NSString stringWithFormat:@"Select address,phone from contacts where name=?"];
     sql_stmt=[sqlString UTF8String];
     
     sqlite3_prepare_v2(contactDB, sql_stmt, -1, &selectStatement, NULL);
@@ -112,7 +117,7 @@
     
     sqlite3_bind_text(updateStatement, 1, [address.text UTF8String], -1, SQLITE_TRANSIENT);
     sqlite3_bind_text(updateStatement, 2, [phone.text UTF8String], -1, SQLITE_TRANSIENT);
-    sqlite3_bind_text(updateStatement, 2, [name.text UTF8String], -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(updateStatement, 3, [name.text UTF8String], -1, SQLITE_TRANSIENT);
     
     if(sqlite3_step(updateStatement)==SQLITE_DONE)
     {
@@ -135,7 +140,7 @@
     sqlite3_bind_text(deleteStatement, 1, [name.text UTF8String], -1, SQLITE_TRANSIENT);
     
     
-    if(sqlite3_step(updateStatement)==SQLITE_DONE)
+    if(sqlite3_step(deleteStatement)==SQLITE_DONE)
     {
         status.text=@"Contact deleted";
         name.text=@"";
@@ -157,10 +162,10 @@
     
     if(sqlite3_step(selectStatement)==SQLITE_ROW)
     {
-        NSString *addressField=[[NSString alloc]initWithUTF8String:<#(const char *)#>sqlite3_column_text(selectStatement, 0)];
+        NSString *addressField=[[NSString alloc]initWithUTF8String:(const char *)sqlite3_column_text(selectStatement, 0)];
         address.text=addressField;
         
-        NSString *phoneField=[[NSString alloc]initWithUTF8String:<#(const char *)#>sqlite3_column_text(selectStatement, 1)];
+        NSString *phoneField=[[NSString alloc]initWithUTF8String:(const char *)sqlite3_column_text(selectStatement, 1)];
         phone.text=phoneField;
         status.text=@"Match found";
        
