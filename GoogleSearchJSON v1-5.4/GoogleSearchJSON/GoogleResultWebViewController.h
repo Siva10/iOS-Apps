@@ -13,4 +13,5 @@
 }
 @property(strong, nonatomic) IBOutlet UIWebView *webView;
 @property(weak, nonatomic) SearchResults *searchResults;
+@property(weak,nonatomic) IBOutlet UITextField *urlString;
 @end

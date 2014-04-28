@@ -10,7 +10,7 @@
 #import "SearchResults.h"
 @implementation GoogleResultWebViewController
 
-@synthesize webView ,searchResults;
+@synthesize webView ,searchResults,urlString;
 
 
 // The designated initializer.  Override if you create the controller programmatically and want to perform customization that is not appropriate for viewDidLoad.
@@ -71,5 +71,17 @@
     // e.g. self.myOutlet = nil;
 }
 
+-(IBAction)back:(id)sender{
+    [webView goBack];
+}
 
+-(IBAction)forward:(id)sender{
+    [webView goForward];
+}
+
+- (void)webViewDidFinishLoad:(UIWebView *)aWebView
+{
+    NSURL *url= webView.request.mainDocumentURL;
+    urlString.text=url.absoluteString;
+}
 @end
